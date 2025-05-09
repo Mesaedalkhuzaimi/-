@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>عزز هويتك الوطنية 🇦🇪</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Tahoma', sans-serif;
+      background-image: url('https://i.imgur.com/4CkNrcD.jpg');
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    .container {
+      background-color: rgba(255, 255, 255, 0.95);
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      border-radius: 12px;
+    }
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    .question {
+      font-size: 22px;
+      margin: 20px 0 10px;
+    }
+    .options label {
+      display: block;
+      font-size: 18px;
+      margin: 10px;
+      cursor: pointer;
+    }
+    button {
+      margin-top: 20px;
+      font-size: 18px;
+      padding: 10px 25px;
+      background-color: #006c4b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #result {
+      display: none;
+    }
+    .footer {
+      margin-top: 40px;
+      font-size: 14px;
+      color: #444;
+    }
+    .certificate {
+      border: 5px solid gold;
+      border-radius: 20px;
+      padding: 20px;
+      margin-top: 30px;
+      background-color: white;
+    }
+    #insta img {
+      margin-top: 20px;
+      width: 100px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>عزز هويتك الوطنية 🇦🇪</h1>
+    <div id="visitorCount" style="font-size:14px; color:#666; margin-bottom:10px;"></div>
+    <div id="quiz">
+      <div class="question" id="questionText"></div>
+      <div class="options" id="optionsContainer"></div>
+      <div>الوقت: <span id="time">30</span> ثانية</div>
+      <button id="nextBtn" disabled>التالي</button>
+    </div>
+    <div id="result">
+      <h2>🎉 تهانينا 🎉</h2>
+      <p id="finalScore"></p>
+      <div class="certificate">
+        <h3>شهادة تقدير</h3>
+        <p>يُمنح هذا التقدير إلى</p>
+        <p><strong>مشارك متميز</strong></p>
+        <p>لإكماله تحدي تعزيز الهوية الوطنية</p>
+        <p><strong>دولة الإمارات العربية المتحدة 🇦🇪</strong></p>
+      </div>
+      <button onclick="window.print()">تحميل / طباعة الشهادة</button>
+      <div id="insta"><img src="https://i.imgur.com/OeRQpKL.png" alt="Instagram QR" /></div>
+    </div>
+    <div class="footer">فكرة وتنفيذ وإعداد: مساعد سالم الخزيمي</div>
+  </div>
+  <script>
+    const questions = Array.from({ length: 50 }, (_, i) => ({
+      question: `سؤال رقم ${i + 1}: متى تأسست دولة الإمارات؟`,
+      options: ["1971", "1981", "1990"],
+      answer: "1971"
+    }));
+
+    let step = 0;
+    let score = 0;
+    let selected = '';
+    let time = 30;
+    let timerInterval;
+
+    const questionText = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const nextBtn = document.getElementById('nextBtn');
+    const timeEl = document.getElementById('time');
+    const quizEl = document.getElementById('quiz');
+    const resultEl = document.getElementById('result');
+    const finalScore = document.getElementById('finalScore');
+
+    function renderQuestion() {
+      const q = questions[step];
+      questionText.textContent = q.question;
+      optionsContainer.innerHTML = '';
+      q.options.forEach(opt => {
+        const label = document.createElement('label');
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'option';
+        radio.value = opt;
+        radio.onclick = () => {
+          selected = opt;
+          nextBtn.disabled = false;
+        };
+        label.appendChild(radio);
+        label.append(' ' + opt);
+        optionsContainer.appendChild(label);
+      });
+      nextBtn.disabled = true;
+      selected = '';
+      time = 30;
+      timeEl.textContent = time;
+    }
+
+    function startTimer() {
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        time--;
+        timeEl.textContent = time;
+        if (time === 0) nextQuestion();
+      }, 1000);
+    }
+
+    function nextQuestion() {
+      clearInterval(timerInterval);
+      if (selected === questions[step].answer) score++;
+      step++;
+      if (step < questions.length) {
+        renderQuestion();
+        startTimer();
+      } else {
+        quizEl.style.display = 'none';
+        resultEl.style.display = 'block';
+        finalScore.textContent = `لقد حصلت على ${score} من ${questions.length}`;
+      }
+    }
+
+    nextBtn.onclick = nextQuestion;
+    renderQuestion();
+    startTimer();
+
+    // عداد زوار عشوائي
+    document.getElementById('visitorCount').textContent = "الزوار: " + (Math.floor(Math.random() * 1000) + 500);
+  </script>
+</body>
+</html>
